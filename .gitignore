@@ -1,0 +1,40 @@
+# Terraform working directory
+.terraform/
+
+# Terraform state files
+*.tfstate
+*.tfstate.*
+
+# Terraform crash logs
+crash.log
+crash.*.log
+
+# Terraform variable files (may contain secrets)
+*.tfvars
+*.tfvars.json
+
+# Terraform override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Terraform CLI configuration
+.terraformrc
+terraform.rc
+
+# Generated infrastructure data
+infrastructure.json
+
+# Generated documentation output
+output/
+*.generated.md
+
+# Node.js (if using TypeScript/Node for documentation generation)
+node_modules/
+
+# Environment variables / secrets
+.env
+.env.*
+
+*.tfplan
