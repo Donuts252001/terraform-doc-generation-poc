@@ -1,0 +1,54 @@
+name: Generate Terraform Infrastructure Documentation
+
+on:
+  push:
+    branches:
+      - release/dev
+
+  workflow_dispatch:
+
+jobs:
+
+  terraform-plan:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+      
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.16.0
+
+      - name: Terraform Init
+        working-directory: terraform
+        run: terraform init
+
+      - name: Terraform Plan
+        working-directory: terraform
+        run: terraform plan -out=tfplan
+
+      # - name: Generate Terraform JSON
+      #   working-directory: terraform
+      #   run: terraform show -json tfplan > ../plan.json
+
+      # - name: Setup Python
+      #   uses: actions/setup-python@v5
+      #   with:
+      #     python-version: "3.12"
+
+      # - name: Install OpenAI SDK
+      #   run: pip install openai
+
+      # - name: Generate Infrastructure Documentation
+      #   run: python scripts/generate-doc.py
+
+
+      # - name: Upload Infrastructure Documentation
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: terraform-infrastructure-documentation
+      #     path: infrastructure.md
