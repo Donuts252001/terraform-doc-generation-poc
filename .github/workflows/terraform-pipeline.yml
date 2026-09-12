@@ -33,7 +33,7 @@ jobs:
 
       - name: Terraform Plan
         working-directory: terraform-iaac
-        run: terraform plan -out=tfplan -input=false
+        run: terraform plan -out=tf-plan -input=false
         env:
             TF_LOG: INFO
 
