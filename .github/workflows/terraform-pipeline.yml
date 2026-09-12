@@ -30,6 +30,8 @@ jobs:
       - name: Terraform Plan
         working-directory: terraform-iaac
         run: terraform plan -out=tfplan
+        env:
+            TF_LOG: INFO
 
       # - name: Generate Terraform JSON
       #   working-directory: terraform
