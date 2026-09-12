@@ -13,6 +13,10 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    env:
+      TF_VAR_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      TF_VAR_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
     steps:
       
       - name: Checkout repository
@@ -29,13 +33,13 @@ jobs:
 
       - name: Terraform Plan
         working-directory: terraform-iaac
-        run: terraform plan -out=tfplan
+        run: terraform plan -out=tfplan -input=false
         env:
             TF_LOG: INFO
 
-      # - name: Generate Terraform JSON
-      #   working-directory: terraform
-      #   run: terraform show -json tfplan > ../plan.json
+      - name: Generate Terraform JSON
+        working-directory: terraform-iaac
+        run: terraform show -json tfplan > terraform-iaac/tf-plan.json
 
       # - name: Setup Python
       #   uses: actions/setup-python@v5
