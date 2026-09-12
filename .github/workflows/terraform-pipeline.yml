@@ -39,7 +39,7 @@ jobs:
 
       - name: Generate Terraform JSON
         working-directory: terraform-iaac
-        run: terraform show -json tfplan > terraform-iaac/tf-plan.json
+        run: terraform show -json tfplan > tf-plan.json
 
       # - name: Setup Python
       #   uses: actions/setup-python@v5
