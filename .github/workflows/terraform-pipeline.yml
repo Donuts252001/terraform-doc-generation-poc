@@ -24,11 +24,11 @@ jobs:
           terraform_version: 1.16.0
 
       - name: Terraform Init
-        working-directory: ../../terraform-doc-generation-poc
+        working-directory: terraform-iaac
         run: terraform init
 
       - name: Terraform Plan
-        working-directory: terraform
+        working-directory: terraform-iaac
         run: terraform plan -out=tfplan
 
       # - name: Generate Terraform JSON
