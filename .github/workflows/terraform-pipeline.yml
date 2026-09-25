@@ -69,7 +69,7 @@ jobs:
         
       - name: Generate Infrastructure Documentation
         env:
-          LLM_MODEL: gemini/gemini-2.5-flash-lite
+          LLM_MODEL: gemini/gemini-3.5-flash-lite
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python scripts/generate-documentation.py
 
