@@ -45,13 +45,13 @@ jobs:
         working-directory: terraform-iaac
         run: cat tf-plan.json
 
-      # - name: Setup Python
-      #   uses: actions/setup-python@v5
-      #   with:
-      #     python-version: "3.12"
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
-      # - name: Install OpenAI SDK
-      #   run: pip install openai
+      - name: Install OpenAI SDK
+        run: pip install openai
 
       # - name: Generate Infrastructure Documentation
       #   run: python scripts/generate-doc.py
