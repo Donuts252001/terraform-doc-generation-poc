@@ -74,10 +74,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: terraform-infrastructure-documentation
-          path: infrastructure.md
+          path: infrastructure2.md
 
-      - name: Terraform Apply
-        working-directory: terraform-iaac
-        run: terraform apply -input=false tf-plan
-        env:
-            TF_LOG: INFO
+      # - name: Terraform Apply
+      #   working-directory: terraform-iaac
+      #   run: terraform apply -input=false tf-plan
+      #   env:
+      #       TF_LOG: INFO
