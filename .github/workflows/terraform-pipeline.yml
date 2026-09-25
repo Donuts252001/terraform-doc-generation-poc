@@ -60,6 +60,12 @@ jobs:
 
       - name: Install LLM SDK
         run: pip install litellm
+
+      - name: Check repository
+        run: |
+          pwd
+          ls -la
+          ls -la scripts
         
       - name: Generate Infrastructure Documentation
         env:
