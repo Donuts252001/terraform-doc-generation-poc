@@ -50,11 +50,22 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install OpenAI SDK
-        run: pip install openai
+      # - name: Install OpenAI SDK
+      #   run: pip install openai
 
       # - name: Generate Infrastructure Documentation
+      #   env:
+      #     OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       #   run: python scripts/generate-doc.py
+
+      - name: Install LLM SDK
+        run: pip install litellm
+        
+      - name: Generate Infrastructure Documentation
+        env:
+          LLM_MODEL: openai/gpt-5
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: python scripts/generate-doc.py
 
 
       # - name: Upload Infrastructure Documentation
