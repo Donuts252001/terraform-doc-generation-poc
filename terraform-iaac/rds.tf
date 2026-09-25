@@ -37,10 +37,14 @@ resource "aws_db_instance" "postgres" {
 
   allocated_storage = 20
 
+  username = "postgres"
+  password = "postgres"
+
   db_subnet_group_name   = aws_db_subnet_group.main_db_subnet_grp.name
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
 
   publicly_accessible = false
+  parameter_group_name = "default.postgres16"
 
   skip_final_snapshot = true
   deletion_protection = false
