@@ -44,6 +44,8 @@ For each resource, include useful configuration details such as:
 - Dependencies/relationships/connections
 - Desired and current capacity/instances
 
+Add a basic architecture diagram explaining all relations and connections between the resources which is well explanatory.
+
 Rules:
 - Document only resources present in the Terraform plan.
 - Do not invent resources or configuration.
