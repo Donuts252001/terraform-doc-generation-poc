@@ -31,11 +31,13 @@ jobs:
         working-directory: terraform-iaac
         run: terraform init
 
+      - name: Terraform Validate
+        working-directory: terraform-iaac
+        run: terraform validate
+
       - name: Terraform Plan
         working-directory: terraform-iaac
         run: terraform plan -out=tf-plan -input=false
-        env:
-            TF_LOG: INFO
 
       - name: Generate Terraform JSON
         working-directory: terraform-iaac
@@ -60,12 +62,6 @@ jobs:
 
       - name: Install LLM SDK
         run: pip install litellm
-
-      - name: Check repository
-        run: |
-          pwd
-          ls -la
-          ls -la scripts
         
       - name: Generate Infrastructure Documentation
         env:
@@ -79,3 +75,9 @@ jobs:
         with:
           name: terraform-infrastructure-documentation
           path: infrastructure.md
+
+      - name: Terraform Apply
+        working-directory: terraform-iaac
+        run: terraform apply -input=false tf-plan
+        env:
+            TF_LOG: INFO

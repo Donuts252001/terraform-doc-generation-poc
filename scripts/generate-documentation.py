@@ -12,8 +12,7 @@ def generate_documentation(plan):
     prompt = f"""
 You are an AWS infrastructure documentation expert.
 
-Analyze the Terraform plan JSON below and generate detailed,
-well-structured Markdown documentation.
+Analyze the Terraform plan JSON below and generate detailed, well-structured Markdown documentation.
 
 Include:
 
@@ -39,13 +38,16 @@ Include:
 For each resource, include useful configuration details such as:
 - Resource type
 - Resource name
+- Location
 - Purpose
 - Important settings
-- Dependencies/relationships
+- Dependencies/relationships/connections
+- Desired and current capacity/instances
 
 Rules:
 - Document only resources present in the Terraform plan.
 - Do not invent resources or configuration.
+- Include all resources present in the plan.
 - Use clear Markdown headings and tables where useful.
 - Make the documentation suitable for a technical AWS infrastructure document.
 
