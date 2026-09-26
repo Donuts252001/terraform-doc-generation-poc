@@ -35,22 +35,22 @@ jobs:
         working-directory: terraform-iaac
         run: terraform validate
 
-      - name: Terraform Plan
-        working-directory: terraform-iaac
-        run: terraform plan -out=tf-plan -input=false
+      # - name: Terraform Plan
+      #   working-directory: terraform-iaac
+      #   run: terraform plan -out=tf-plan -input=false
 
-      - name: Generate Terraform JSON
-        working-directory: terraform-iaac
-        run: terraform show -json tf-plan > tf-plan.json
+      # - name: Generate Terraform JSON
+      #   working-directory: terraform-iaac
+      #   run: terraform show -json tf-plan > tf-plan.json
 
-      - name: Print Terraform JSON
-        working-directory: terraform-iaac
-        run: cat tf-plan.json
+      # - name: Print Terraform JSON
+      #   working-directory: terraform-iaac
+      #   run: cat tf-plan.json
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
+      # - name: Setup Python
+      #   uses: actions/setup-python@v5
+      #   with:
+      #     python-version: "3.12"
 
       # - name: Install OpenAI SDK
       #   run: pip install openai
@@ -60,24 +60,24 @@ jobs:
       #     OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       #   run: python scripts/generate-doc.py
 
-      - name: Install LLM SDK
-        run: pip install litellm
+      # - name: Install LLM SDK
+      #   run: pip install litellm
         
-      - name: Generate Infrastructure Documentation
-        env:
-          LLM_MODEL: gemini/gemini-3.5-flash-lite
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python scripts/generate-documentation.py
-
-
-      - name: Upload Infrastructure Documentation
-        uses: actions/upload-artifact@v4
-        with:
-          name: terraform-infrastructure-documentation2
-          path: infrastructure.md
-
-      # - name: Terraform Apply
-      #   working-directory: terraform-iaac
-      #   run: terraform apply -input=false tf-plan
+      # - name: Generate Infrastructure Documentation
       #   env:
-      #       TF_LOG: INFO
+      #     LLM_MODEL: gemini/gemini-3.5-flash-lite
+      #     GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      #   run: python scripts/generate-documentation.py
+
+
+      # - name: Upload Infrastructure Documentation
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: terraform-infrastructure-documentation2
+      #     path: infrastructure.md
+
+      - name: Terraform Apply
+        working-directory: terraform-iaac
+        run: terraform destroy
+        env:
+            TF_LOG: INFO
