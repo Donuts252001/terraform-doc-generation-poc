@@ -51,3 +51,21 @@ resource "aws_s3_bucket_versioning" "uploads_bucket_3" {
     status = "Disabled"
   }
 }
+
+resource "aws_s3_bucket" "uploads_bucket_4" {
+  bucket_prefix = "${var.environment}-uploads-bucket-4"
+
+  tags = {
+    Name        = "${var.environment}-uploads-4"
+    Environment = var.environment
+    ManagedBy   = "Terraform"
+  }
+}
+
+resource "aws_s3_bucket_versioning" "uploads_bucket_4" {
+  bucket = aws_s3_bucket.uploads_bucket_4.id
+
+  versioning_configuration {
+    status = "Disabled"
+  }
+}
