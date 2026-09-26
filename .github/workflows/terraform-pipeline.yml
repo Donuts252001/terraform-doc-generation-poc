@@ -78,9 +78,3 @@ jobs:
         with:
           name: terraform-infrastructure-documentation2
           path: infrastructure.md
-
-      - name: Terraform Apply
-        working-directory: terraform-iaac
-        run: terraform apply -input=false tf-plan
-        env:
-            TF_LOG: INFO
