@@ -73,6 +73,7 @@ Terraform Plan JSON:
 def main():
     plan = load_plan("terraform-iaac/tf-plan.json")
     changed_resources = plan.get("resource_changes", [])
+    print('changed resources:', changed_resources)
     documentation = generate_documentation(changed_resources)
 
     with open("infrastructure.md", "w", encoding="utf-8") as file:
