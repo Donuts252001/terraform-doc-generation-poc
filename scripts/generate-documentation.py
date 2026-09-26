@@ -8,11 +8,11 @@ def load_plan(path):
         return json.load(file)
 
 
-def generate_documentation(plan):
+def generate_documentation(changed_resources):
     prompt = f"""
 You are an AWS infrastructure documentation expert.
 
-Analyze the Terraform plan JSON below and generate detailed, well-structured Markdown documentation.
+Analyze the Terraform plan JSON below and generate detailed documentation for only the changes to be applied, well-structured Markdown documentation.
 
 Include:
 
@@ -44,7 +44,6 @@ For each resource, include useful configuration details such as:
 - Dependencies/relationships/connections
 - Desired and current capacity/instances
 
-Add a basic architecture diagram with mermaid graph explaining all relations and connections between the resources which is well explanatory.
 
 Rules:
 - Document only resources present in the Terraform plan.
@@ -55,7 +54,7 @@ Rules:
 
 Terraform Plan JSON:
 
-{json.dumps(plan, indent=2)}
+{json.dumps(changed_resources, indent=2)}
 """
 
     response = completion(
@@ -73,8 +72,8 @@ Terraform Plan JSON:
 
 def main():
     plan = load_plan("terraform-iaac/tf-plan.json")
-
-    documentation = generate_documentation(plan)
+    changed_resources = plan.get("resource_changes", [])
+    documentation = generate_documentation(changed_resources)
 
     with open("infrastructure.md", "w", encoding="utf-8") as file:
         file.write(documentation)
