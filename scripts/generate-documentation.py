@@ -9,6 +9,9 @@ def load_plan(path):
 
 
 def generate_documentation(changed_resources):
+    generated_date = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+    commit_id = os.environ.get("GITHUB_SHA", "Unknown")[:7]
+    
     prompt = f"""
 You are an AWS infrastructure documentation expert.
 
@@ -21,8 +24,8 @@ Don't involve documentation for the resources which are already created or have 
 
 - Infrastructure overview
 - Documentation by: Terraform
-- Generated date: 
-- Commit ID: 
+- Generated date: {generated_date}
+- Commit ID: {commit_id}
 # - Environment
 # - AWS region
 # - VPC and networking
