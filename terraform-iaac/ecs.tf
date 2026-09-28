@@ -12,8 +12,8 @@ resource "aws_ecs_cluster" "main_ecs2" {
   }
 }
 
-resource "aws_security_group" "ecs_sg2" {
-  name   = "${var.environment}-ecs-sg2"
+resource "aws_security_group" "ecs_sg" {
+  name   = "${var.environment}-ecs-sg"
   vpc_id = aws_vpc.main_vpc.id
 
   ingress {
@@ -33,6 +33,6 @@ resource "aws_security_group" "ecs_sg2" {
   }
 
   tags = {
-    Name = "${var.environment}-ecs-sg2"
+    Name = "${var.environment}-ecs-sg"
   }
 }
