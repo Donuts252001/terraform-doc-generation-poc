@@ -12,7 +12,7 @@ resource "aws_s3_bucket_versioning" "uploads_bucket" {
   bucket = aws_s3_bucket.uploads_bucket.id
 
   versioning_configuration {
-    status = "Enabled"
+    status = "Disabled"
   }
 }
 
@@ -64,24 +64,6 @@ resource "aws_s3_bucket" "uploads_bucket_4" {
 
 resource "aws_s3_bucket_versioning" "uploads_bucket_4" {
   bucket = aws_s3_bucket.uploads_bucket_4.id
-
-  versioning_configuration {
-    status = "Disabled"
-  }
-}
-
-resource "aws_s3_bucket" "uploads_bucket_5" {
-  bucket_prefix = "${var.environment}-uploads-bucket-5"
-
-  tags = {
-    Name        = "${var.environment}-uploads-5"
-    Environment = var.environment
-    ManagedBy   = "Terraform"
-  }
-}
-
-resource "aws_s3_bucket_versioning" "uploads_bucket_5" {
-  bucket = aws_s3_bucket.uploads_bucket_5.id
 
   versioning_configuration {
     status = "Disabled"
