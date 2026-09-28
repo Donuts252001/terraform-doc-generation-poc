@@ -53,6 +53,8 @@ For each resource with opearations or changes to be done, include useful configu
 - Dependencies/relationships/connections
 - Desired and current capacity/instances
 
+Include an architecture diagram at the end including all the resources and relations between them.
+
 
 Rules:
 - Do not hallucinate.
