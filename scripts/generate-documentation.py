@@ -13,6 +13,7 @@ def generate_documentation(changed_resources):
 You are an AWS infrastructure documentation expert.
 
 Analyze the Terraform plan JSON below and generate detailed documentation for only the changes to be applied, well-structured Markdown documentation.
+Don't involve documentation for the resources which are already created or have no change.
 
 Include:
 
@@ -46,7 +47,8 @@ For each resource, include useful configuration details such as:
 
 
 Rules:
-- Document only resources present in the Terraform plan.
+- Do not hallucinate.
+- Document only resources present in the Terraform plan which are to be created or which have changes.
 - Do not invent resources or configuration.
 - Include all resources present in the plan.
 - Use clear Markdown headings and tables where useful.
