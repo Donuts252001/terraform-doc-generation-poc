@@ -27,8 +27,9 @@ Don't involve documentation for the resources which are already created or have 
 - Documentation by: Terraform
 - Generated date: {generated_date}
 - Commit ID: {commit_id}
-# - Environment
-# - AWS region
+- Environment
+- AWS region
+
 # - VPC and networking
 # - Subnets
 # - Route tables
@@ -83,7 +84,6 @@ Terraform Plan JSON:
 def main():
     plan = load_plan("terraform-iaac/tf-plan.json")
     changed_resources = plan.get("resource_changes", [])
-    print('changed resources:', changed_resources)
     documentation = generate_documentation(changed_resources)
 
     with open("infrastructure.md", "w", encoding="utf-8") as file:
