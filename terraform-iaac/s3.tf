@@ -12,7 +12,7 @@ resource "aws_s3_bucket_versioning" "uploads_bucket" {
   bucket = aws_s3_bucket.uploads_bucket.id
 
   versioning_configuration {
-    status = "Disabled"
+    status = "Enabled"
   }
 }
 
