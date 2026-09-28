@@ -13,30 +13,30 @@ def generate_documentation(changed_resources):
 You are an AWS infrastructure documentation expert.
 
 Analyze the Terraform plan JSON below and generate detailed documentation for only the changes to be applied, well-structured Markdown documentation.
-Don't involve documentation for the resources which are already created or have no change.
+Don't involve documentation for the resources which are already created or have no change or action as no-op.
 
-Include:
+# Include:
 
-# AWS Infrastructure Documentation
+# # AWS Infrastructure Documentation
 
-- Infrastructure overview
-- Environment
-- AWS region
-- VPC and networking
-- Subnets
-- Route tables
-- Internet/NAT gateways
-- Security groups
-- IAM resources
-- Compute resources
-- Storage resources
-- Databases
-- Load balancers
-- Monitoring and logging
-- Resource relationships
-- Important configuration details
+# - Infrastructure overview
+# - Environment
+# - AWS region
+# - VPC and networking
+# - Subnets
+# - Route tables
+# - Internet/NAT gateways
+# - Security groups
+# - IAM resources
+# - Compute resources
+# - Storage resources
+# - Databases
+# - Load balancers
+# - Monitoring and logging
+# - Resource relationships
+# - Important configuration details
 
-For each resource, include useful configuration details such as:
+For each resource with opearations or changes to be done, include useful configuration details such as:
 - Resource type
 - Resource name
 - Location
@@ -48,9 +48,10 @@ For each resource, include useful configuration details such as:
 
 Rules:
 - Do not hallucinate.
-- Document only resources present in the Terraform plan which are to be created or which have changes.
+- Document only resources present in the Terraform plan which are have some operation to be done or which have changes.
 - Do not invent resources or configuration.
-- Include all resources present in the plan.
+- Do not include resources which have no changes or action as no-op.
+# - Include all resources present in the plan.
 - Use clear Markdown headings and tables where useful.
 - Make the documentation suitable for a technical AWS infrastructure document.
 
