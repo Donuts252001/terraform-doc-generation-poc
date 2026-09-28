@@ -17,9 +17,12 @@ Don't involve documentation for the resources which are already created or have 
 
 # Include:
 
-# # AWS Infrastructure Documentation
+# AWS Infrastructure Documentation
 
-# - Infrastructure overview
+- Infrastructure overview
+- Documentation by: Terraform
+- Generated date: 
+- Commit ID: 
 # - Environment
 # - AWS region
 # - VPC and networking
