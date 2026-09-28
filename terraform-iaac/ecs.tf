@@ -1,5 +1,5 @@
-resource "aws_ecs_cluster" "main_ecs" {
-  name = "${var.environment}-cluster"
+resource "aws_ecs_cluster" "main_ecs2" {
+  name = "${var.environment}-cluster2"
 
   setting {
     name  = "containerInsights"
@@ -12,8 +12,8 @@ resource "aws_ecs_cluster" "main_ecs" {
   }
 }
 
-resource "aws_security_group" "ecs_sg" {
-  name   = "${var.environment}-ecs-sg"
+resource "aws_security_group" "ecs_sg2" {
+  name   = "${var.environment}-ecs-sg2"
   vpc_id = aws_vpc.main_vpc.id
 
   ingress {
@@ -33,6 +33,6 @@ resource "aws_security_group" "ecs_sg" {
   }
 
   tags = {
-    Name = "${var.environment}-ecs-sg"
+    Name = "${var.environment}-ecs-sg2"
   }
 }
