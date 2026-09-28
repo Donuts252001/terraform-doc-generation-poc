@@ -3,7 +3,7 @@ output "vpc_id" {
 }
 
 output "ecs_cluster_name" {
-  value = aws_ecs_cluster.main_ecs.name
+  value = aws_ecs_cluster.main_ecs2.name
 }
 
 output "rds_endpoint" {
