@@ -79,6 +79,6 @@ jobs:
           name: terraform-infrastructure-documentation
           path: infrastructure.md
 
-      - name: Terraform Apply
-        working-directory: terraform-iaac
-        run: terraform apply -input=false tf-plan
+      # - name: Terraform Apply
+      #   working-directory: terraform-iaac
+      #   run: terraform apply -input=false tf-plan
