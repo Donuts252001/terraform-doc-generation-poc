@@ -74,6 +74,8 @@ jobs:
 
       - name: Documentation add to repository
         run: |
+                git config --global user.email "26korgaonkar.vaishnavi2001@gmail.com"
+                git config --global user.name "Vaishnavi Korgaonkar"
                 git add infrastructure.md
                 git commit -m "docs: update Terraform Infrastructure Documentation File"
                 git push
