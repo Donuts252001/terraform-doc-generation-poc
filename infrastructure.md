@@ -2,8 +2,8 @@
 
 - Infrastructure overview
 - Documentation by: Terraform
-- Generated date: 2026-10-02 13:17:56 UTC
-- Commit ID: bccf5ca
+- Generated date: 2026-10-02 13:37:57 UTC
+- Commit ID: 9bbc1f6
 - Environment: dev
 - AWS region: eu-west-1
 
@@ -103,7 +103,7 @@
 
 ### S3 Buckets
 - **Resource type:** `aws_s3_bucket`
-- **Resource names:** `uploads_bucket`, `uploads_bucket_2`, `uploads_bucket_3`, `uploads_bucket_4`, `uploads_bucket_5`
+- **Resource names:** `uploads_bucket`, `uploads_bucket_2`, `uploads_bucket_3`, `uploads_bucket_4`, `uploads_bucket_6`
 - **Location:** AWS Region `eu-west-1`
 - **Purpose:** Object storage for application uploads in the development environment.
 - **Important settings:**
@@ -112,20 +112,20 @@
     - `aws_s3_bucket.uploads_bucket_2` (`dev-uploads-bucket-2`, `dev-uploads-2`)
     - `aws_s3_bucket.uploads_bucket_3` (`dev-uploads-bucket-3`, `dev-uploads-3`)
     - `aws_s3_bucket.uploads_bucket_4` (`dev-uploads-bucket-4`, `dev-uploads-4`)
-    - `aws_s3_bucket.uploads_bucket_5` (`dev-uploads-bucket-5`, `dev-uploads-5`)
+    - `aws_s3_bucket.uploads_bucket_6` (`dev-uploads-bucket-6`, `dev-uploads-6`)
   - Force Destroy: `false`
-  - Tags: `Environment = dev`, `ManagedBy = Terraform`, `Name = dev-uploads[-2|-3|-4|-5]`
+  - Tags: `Environment = dev`, `ManagedBy = Terraform`, `Name = dev-uploads[-2|-3|-4|-6]`
 
 ### S3 Bucket Versioning
 - **Resource types:** `aws_s3_bucket_versioning`
-- **Resource names:** `uploads_bucket`, `uploads_bucket_2`, `uploads_bucket_3`, `uploads_bucket_4`, `uploads_bucket_5`
+- **Resource names:** `uploads_bucket`, `uploads_bucket_2`, `uploads_bucket_3`, `uploads_bucket_4`, `uploads_bucket_6`
 - **Purpose:** Manages versioning configurations for the corresponding S3 upload buckets.
 - **Important settings:**
   - `aws_s3_bucket_versioning.uploads_bucket`: Versioning status **Enabled**
   - `aws_s3_bucket_versioning.uploads_bucket_2`: Versioning status **Disabled**
   - `aws_s3_bucket_versioning.uploads_bucket_3`: Versioning status **Disabled**
   - `aws_s3_bucket_versioning.uploads_bucket_4`: Versioning status **Disabled**
-  - `aws_s3_bucket_versioning.uploads_bucket_5`: Versioning status **Enabled**
+  - `aws_s3_bucket_versioning.uploads_bucket_6`: Versioning status **Enabled**
 
 ---
 
@@ -170,4 +170,4 @@
 - `aws_subnet.public-subnet` and `aws_subnet.private-subnet` reside within `aws_vpc.main_vpc`.
 - `aws_security_group.ecs_sg` and `aws_security_group.rds_sg` protect resources inside `aws_vpc.main_vpc`.
 - `aws_db_instance.postgres` is deployed into `aws_db_subnet_group.main_db_subnet_grp` inside the VPC network.
-- `aws_s3_bucket_versioning` resources are explicitly bound to their respective `aws_s3_bucket` resources (`uploads_bucket`, `uploads_bucket_2`, `uploads_bucket_3`, `uploads_bucket_4`, `uploads_bucket_5`).
+- `aws_s3_bucket_versioning` resources are explicitly bound to their respective `aws_s3_bucket` resources (`uploads_bucket`, `uploads_bucket_2`, `uploads_bucket_3`, `uploads_bucket_4`, `uploads_bucket_6`).
