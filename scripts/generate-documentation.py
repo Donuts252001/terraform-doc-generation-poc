@@ -8,6 +8,12 @@ def load_plan(path):
     with open(path, "r", encoding="utf-8") as file:
         return json.load(file)
 
+def load_existing_documentation(path): 
+    if os.path.exists(path): 
+        with open(path, "r", encoding="utf-8") as file: 
+            return file.read() 
+    return ""
+
 
 def generate_documentation(changed_resources):
     generated_date = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
@@ -16,8 +22,10 @@ def generate_documentation(changed_resources):
     prompt = f"""
 You are an AWS infrastructure documentation expert.
 
+Update the EXISTING AWS infrastructure documentation if it exists using ONLY the Terraform resources that have changes or operations in the Terraform plan below.
+
 Analyze the Terraform plan JSON below and generate detailed documentation for only the changes to be applied, well-structured Markdown documentation.
-Don't involve documentation for the resources which are already created or have no change or action as no-op.
+Don't involve documentation for the resources which are already created or have no change or action as no-op. Do not update documentation for the resources that have no changes.
 
 # Include:
 
@@ -53,16 +61,16 @@ For each resource with opearations or changes to be done, include useful configu
 - Dependencies/relationships/connections
 - Desired and current capacity/instances
 
-Include an architecture diagram at the end including all the resources and relations between them.
-
 
 Rules:
 - Do not hallucinate.
 - Document only resources present in the Terraform plan which are have some operation to be done or which have changes.
+- Preserve all existing documentation for resources that are not changed.
+- Update only the sections corresponding to changed resources.
+- Add documentation for newly created resources. 
+- Update documentation for modified resources. 
+- Remove documentation for deleted resources.
 - Do not invent resources or configuration.
-- Do not include resources which have no changes or action as no-op.
-# - Include all resources present in the plan.
-- Use clear Markdown headings and tables where useful.
 - Make the documentation suitable for a technical AWS infrastructure document.
 
 Terraform Plan JSON:
@@ -86,7 +94,8 @@ Terraform Plan JSON:
 def main():
     plan = load_plan("terraform-iaac/tf-plan.json")
     changed_resources = plan.get("resource_changes", [])
-    documentation = generate_documentation(changed_resources)
+    existing_documentation = load_existing_documentation( "infrastructure.md" )
+    documentation = generate_documentation(changed_resources,existing_documentation)
 
     with open("infrastructure.md", "w", encoding="utf-8") as file:
         file.write(documentation)
