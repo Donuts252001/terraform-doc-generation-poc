@@ -7,6 +7,9 @@ on:
 
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
 
   terraform-plan:
@@ -75,9 +78,9 @@ jobs:
       - name: Documentation add to repository
         run: |
                 git config --global user.email "26korgaonkar.vaishnavi2001@gmail.com"
-                git config --global user.name "Vaishnavi Korgaonkar"
+                git config --global user.name "github-actions[bot]"
                 git add infrastructure.md
-                git commit -m "docs: update Terraform Infrastructure Documentation File"
+                git commit -m --allow-empty "docs: update Terraform Infrastructure Documentation File"
                 git push
 
       - name: Upload Infrastructure Documentation
