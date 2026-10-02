@@ -15,7 +15,7 @@ def load_existing_documentation(path):
     return ""
 
 
-def generate_documentation(changed_resources):
+def generate_documentation(changed_resources, existing_documentation):
     generated_date = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
     commit_id = os.environ.get("GITHUB_SHA", "Unknown")[:7]
     
@@ -72,6 +72,9 @@ Rules:
 - Remove documentation for deleted resources.
 - Do not invent resources or configuration.
 - Make the documentation suitable for a technical AWS infrastructure document.
+
+# EXISTING DOCUMENTATION:
+ {existing_documentation}
 
 Terraform Plan JSON:
 
