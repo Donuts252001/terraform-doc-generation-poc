@@ -21,7 +21,6 @@ jobs:
       TF_VAR_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
     steps:
-      
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -72,6 +71,12 @@ jobs:
           LLM_MODEL: gemini/gemini-3.5-flash-lite
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python scripts/generate-documentation.py
+
+      - name: Documentation add to repository
+        run: |
+                git add infrastructure.md
+                git commit -m "docs: update Terraform Infrastructure Documentation File"
+                git push
 
       - name: Upload Infrastructure Documentation
         uses: actions/upload-artifact@v4
