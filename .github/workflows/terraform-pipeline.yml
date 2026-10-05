@@ -89,6 +89,10 @@ jobs:
           name: terraform-infrastructure-documentation
           path: infrastructure.md
 
-      - name: Terraform Apply
+      # - name: Terraform Apply
+      #   working-directory: terraform-iaac
+      #   run: terraform apply -input=false tf-plan
+
+      - name: Terraform Destroy
         working-directory: terraform-iaac
-        run: terraform apply -input=false tf-plan
+        run: terraform destroy -auto-approve
