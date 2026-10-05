@@ -2,8 +2,8 @@
 
 - Infrastructure overview
 - Documentation by: Terraform
-- Generated date: 2026-10-05 06:41:09 UTC
-- Commit ID: cf72a43
+- Generated date: 2026-10-05 06:51:27 UTC
+- Commit ID: d732203
 - Environment: dev
 - AWS region: eu-west-1
 
@@ -73,16 +73,6 @@
   - Egress: All ports and protocols (`-1`) allowed to `0.0.0.0/0`.
   - Tags: `Name = dev-ecs-sg`
 
-### RDS Security Group
-- **Resource type:** `aws_security_group`
-- **Resource name:** `rds_sg`
-- **Location:** `aws_vpc.main_vpc`
-- **Purpose:** Controls database network access.
-- **Dependencies/relationships/connections:** Associated with `aws_vpc.main_vpc`.
-- **Important settings:**
-  - Ingress: Port `5432` (TCP) for PostgreSQL.
-  - Tags: `Name = dev-rds-sg`
-
 ---
 
 ## Compute resources
@@ -130,44 +120,12 @@
 ---
 
 ## Databases
-
-### DB Subnet Group
-- **Resource type:** `aws_db_subnet_group`
-- **Resource name:** `main_db_subnet_grp`
-- **Location:** `aws_vpc.main_vpc`
-- **Purpose:** Groups subnets for RDS database deployment across availability zones.
-- **Important settings:**
-  - Name: `dev-db-subnet-group`
-  - Description: `Managed by Terraform`
-  - Tags: `Name = dev-db-subnet-group`
-
-### PostgreSQL RDS Instance
-- **Resource type:** `aws_db_instance`
-- **Resource name:** `postgres`
-- **Location:** `aws_db_subnet_group.main_db_subnet_grp` (Private subnet context)
-- **Purpose:** Relational database management system for application data storage.
-- **Dependencies/relationships/connections:** 
-  - Subnet Group: `dev-db-subnet-group`
-- **Important settings:**
-  - Identifier: `dev-postgres`
-  - Engine: `postgres` (Version `16`)
-  - Instance Class: `db.t3.micro`
-  - Allocated Storage: `20` GB
-  - Master Username: `postgres`
-  - Parameter Group: `default.postgres16`
-  - Auto Minor Version Upgrade: Enabled (`true`)
-  - Delete Automated Backups: Enabled (`true`)
-  - Skip Final Snapshot: Enabled (`true`)
-  - Performance Insights: Disabled (`false`)
-  - Publicly Accessible: Disabled (`false`)
-  - Tags: `Environment = dev`, `ManagedBy = Terraform`, `Name = dev-postgres`
-- **Desired and current capacity/instances:** Single instance (`db.t3.micro`), 20 GB allocated storage.
+*(Note: PostgreSQL RDS Instance and DB Subnet Group resources have been removed from the infrastructure configuration per the current Terraform plan.)*
 
 ---
 
 ## Resource relationships
 - `aws_internet_gateway.igw` is connected to `aws_vpc.main_vpc`.
 - `aws_subnet.public-subnet` and `aws_subnet.private-subnet` reside within `aws_vpc.main_vpc`.
-- `aws_security_group.ecs_sg` and `aws_security_group.rds_sg` protect resources inside `aws_vpc.main_vpc`.
-- `aws_db_instance.postgres` is deployed into `aws_db_subnet_group.main_db_subnet_grp` inside the VPC network.
+- `aws_security_group.ecs_sg` protects resources inside `aws_vpc.main_vpc`.
 - `aws_s3_bucket_versioning` resources are explicitly bound to their respective `aws_s3_bucket` resources (`uploads_bucket`, `uploads_bucket_2`, `uploads_bucket_3`, `uploads_bucket_4`, `uploads_bucket_6`).
