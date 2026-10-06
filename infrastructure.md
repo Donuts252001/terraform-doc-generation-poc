@@ -2,8 +2,8 @@
 
 - Infrastructure overview
 - Documentation by: Terraform
-- Updated date: 2026-10-06 07:16:11 UTC
-- Commit ID: a2f59cd
+- Updated date: 2026-10-06 07:23:11 UTC
+- Commit ID: 6319a16
 - Environment: dev
 - AWS region: eu-west-1
 
@@ -129,3 +129,41 @@
 - `aws_subnet.public-subnet` and `aws_subnet.private-subnet` reside within `aws_vpc.main_vpc`.
 - `aws_security_group.ecs_sg` protects resources inside `aws_vpc.main_vpc`.
 - `aws_s3_bucket_versioning` resources are explicitly bound to their respective `aws_s3_bucket` resources (`uploads_bucket`, `uploads_bucket_2`, `uploads_bucket_3`, `uploads_bucket_4`, `uploads_bucket_6`).
+
+---
+
+## ARCHITECTURE DIAGRAM
+
+```mermaid
+graph TD
+    subgraph AWS ["AWS Cloud (eu-west-1)"]
+        subgraph VPC ["VPC (10.0.0.0/16)"]
+            IGW["Internet Gateway (dev-igw)"]
+            
+            subgraph SubnetPub ["Public Subnet (10.0.1.0/24 - eu-west-1a)"]
+                PubResources["Public Web Traffic / Load Balancer Entry"]
+            end
+            
+            subgraph SubnetPriv ["Private Subnet (10.0.10.0/24 - eu-west-1b)"]
+                PrivResources["Private Container Tasks / Workloads"]
+            end
+
+            SG["ECS Security Group (dev-ecs-sg)"]
+        end
+
+        ECS["ECS Cluster (dev-cluster2)"]
+
+        subgraph S3 ["S3 Buckets"]
+            B1["dev-uploads<br/>(Versioning: Enabled)"]
+            B2["dev-uploads-2<br/>(Versioning: Disabled)"]
+            B3["dev-uploads-3<br/>(Versioning: Disabled)"]
+            B4["dev-uploads-4<br/>(Versioning: Disabled)"]
+            B6["dev-uploads-6<br/>(Versioning: Enabled)"]
+        end
+    end
+
+    IGW <--> VPC
+    PubResources <--> IGW
+    PrivResources -.-> SG
+    ECS -.-> PrivResources
+```
