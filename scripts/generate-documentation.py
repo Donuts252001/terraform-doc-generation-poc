@@ -16,7 +16,7 @@ def load_existing_documentation(path):
 
 
 def generate_documentation(changed_resources, existing_documentation):
-    generated_date = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+    updated_date = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
     commit_id = os.environ.get("GITHUB_SHA", "Unknown")[:7]
     
     prompt = f"""
@@ -33,24 +33,23 @@ Don't involve documentation for the resources which are already created or have 
 
 - Infrastructure overview
 - Documentation by: Terraform
-- Generated date: {generated_date}
+- Updated date: {updated_date}
 - Commit ID: {commit_id}
 - Environment
 - AWS region
-
-# - VPC and networking
-# - Subnets
-# - Route tables
-# - Internet/NAT gateways
-# - Security groups
-# - IAM resources
-# - Compute resources
-# - Storage resources
-# - Databases
-# - Load balancers
-# - Monitoring and logging
-# - Resource relationships
-# - Important configuration details
+- VPC and networking
+- Subnets
+- Route tables
+- Internet/NAT gateways
+- Security groups
+- IAM resources
+- Compute resources
+- Storage resources
+- Databases
+- Load balancers
+- Monitoring and logging
+- Resource relationships
+- Important configuration details
 
 For each resource with opearations or changes to be done, include useful configuration details such as:
 - Resource type
@@ -60,7 +59,6 @@ For each resource with opearations or changes to be done, include useful configu
 - Important settings
 - Dependencies/relationships/connections
 - Desired and current capacity/instances
-
 
 Rules:
 - Do not hallucinate.
