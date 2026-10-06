@@ -61,7 +61,7 @@ For each resource with opearations or changes to be done, include useful configu
 - Desired and current capacity/instances
 
 #ARCHITECTURE DIAGRAM
-Attach an architure diagram at the end including all the resources. Update the diagram if there are any changes.
+Attach an architure diagram at the end including all the resources well explained with proper aws resource icons and naming. Update the diagram if there are any changes.
 
 Rules:
 - Do not hallucinate.
