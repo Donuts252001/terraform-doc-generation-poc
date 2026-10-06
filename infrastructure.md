@@ -1,11 +1,11 @@
 # AWS Infrastructure Documentation
 
-- Infrastructure overview
-- Documentation by: Terraform
-- Updated date: 2026-10-06 07:23:11 UTC
-- Commit ID: 6319a16
-- Environment: dev
-- AWS region: eu-west-1
+- **Infrastructure overview:** Multi-tier containerized web application infrastructure with segregated networking and object storage.
+- **Documentation by:** Terraform
+- **Updated date:** 2026-10-06 08:42:40 UTC
+- **Commit ID:** 191d5fc
+- **Environment:** dev
+- **AWS region:** eu-west-1
 
 ---
 
@@ -28,7 +28,7 @@
 - **Resource name:** `igw`
 - **Location:** AWS Region `eu-west-1`
 - **Purpose:** Provides communication between the VPC and the internet.
-- **Dependencies/relationships/connections:** Attached to `aws_vpc.main_vpc`.
+- **Dependencies/relationships/connections:** Associated with `aws_vpc.main_vpc`.
 - **Important settings:**
   - Tags: `Name = dev-igw`
 
@@ -70,7 +70,7 @@
 - **Dependencies/relationships/connections:** Associated with `aws_vpc.main_vpc`.
 - **Important settings:**
   - Ingress: Port `3000` (TCP) allowed from CIDR block `10.0.0.0/16`.
-  - Egress: All ports and protocols (`-1`) allowed to `0.0.0.0/0`.
+  - Egress: All ports and protocols (`-1`) allowed to `0.0.0.0/0` (any destination).
   - Tags: `Name = dev-ecs-sg`
 
 ---
@@ -97,38 +97,38 @@
 - **Location:** AWS Region `eu-west-1`
 - **Purpose:** Object storage for application uploads in the development environment.
 - **Important settings:**
-  - Bucket Prefixes & Names:
-    - `aws_s3_bucket.uploads_bucket` (`dev-uploads-bucket-`, `dev-uploads`)
-    - `aws_s3_bucket.uploads_bucket_2` (`dev-uploads-bucket-2`, `dev-uploads-2`)
-    - `aws_s3_bucket.uploads_bucket_3` (`dev-uploads-bucket-3`, `dev-uploads-3`)
-    - `aws_s3_bucket.uploads_bucket_4` (`dev-uploads-bucket-4`, `dev-uploads-4`)
-    - `aws_s3_bucket.uploads_bucket_6` (`dev-uploads-bucket-6`, `dev-uploads-6`)
   - Force Destroy: `false`
-  - Tags: `Environment = dev`, `ManagedBy = Terraform`, `Name = dev-uploads[-2|-3|-4|-6]`
+  - Bucket Prefixes & Names:
+    - `aws_s3_bucket.uploads_bucket` (`dev-uploads-bucket-`, Tags: `Name = dev-uploads`)
+    - `aws_s3_bucket.uploads_bucket_2` (`dev-uploads-bucket-2`, Tags: `Name = dev-uploads-2`)
+    - `aws_s3_bucket.uploads_bucket_3` (`dev-uploads-bucket-3`, Tags: `Name = dev-uploads-3`)
+    - `aws_s3_bucket.uploads_bucket_4` (`dev-uploads-bucket-4`, Tags: `Name = dev-uploads-4`)
+    - `aws_s3_bucket.uploads_bucket_6` (`dev-uploads-bucket-6`, Tags: `Name = dev-uploads-6`)
+  - Tags: `Environment = dev`, `ManagedBy = Terraform`
 
 ### S3 Bucket Versioning
 - **Resource types:** `aws_s3_bucket_versioning`
 - **Resource names:** `uploads_bucket`, `uploads_bucket_2`, `uploads_bucket_3`, `uploads_bucket_4`, `uploads_bucket_6`
-- **Purpose:** Manages versioning configurations for the corresponding S3 upload buckets.
+- **Purpose:** Configuration to enforce or disable versioning history for objects within each S3 bucket.
 - **Important settings:**
-  - `aws_s3_bucket_versioning.uploads_bucket`: Versioning status **Enabled**
-  - `aws_s3_bucket_versioning.uploads_bucket_2`: Versioning status **Disabled**
-  - `aws_s3_bucket_versioning.uploads_bucket_3`: Versioning status **Disabled**
-  - `aws_s3_bucket_versioning.uploads_bucket_4`: Versioning status **Disabled**
-  - `aws_s3_bucket_versioning.uploads_bucket_6`: Versioning status **Enabled**
+  - `aws_s3_bucket_versioning.uploads_bucket`: Status **Enabled**
+  - `aws_s3_bucket_versioning.uploads_bucket_2`: Status **Disabled**
+  - `aws_s3_bucket_versioning.uploads_bucket_3`: Status **Disabled**
+  - `aws_s3_bucket_versioning.uploads_bucket_4`: Status **Disabled**
+  - `aws_s3_bucket_versioning.uploads_bucket_6`: Status **Enabled**
 
 ---
 
 ## Databases
-*(Note: PostgreSQL RDS Instance and DB Subnet Group resources have been removed from the infrastructure configuration per the current Terraform plan.)*
+*(Note: PostgreSQL RDS Instance and DB Subnet Group resources are not configured in this current infrastructure generation.)*
 
 ---
 
 ## Resource relationships
-- `aws_internet_gateway.igw` is connected to `aws_vpc.main_vpc`.
-- `aws_subnet.public-subnet` and `aws_subnet.private-subnet` reside within `aws_vpc.main_vpc`.
-- `aws_security_group.ecs_sg` protects resources inside `aws_vpc.main_vpc`.
-- `aws_s3_bucket_versioning` resources are explicitly bound to their respective `aws_s3_bucket` resources (`uploads_bucket`, `uploads_bucket_2`, `uploads_bucket_3`, `uploads_bucket_4`, `uploads_bucket_6`).
+- `aws_internet_gateway.igw` is connected directly to `aws_vpc.main_vpc`.
+- `aws_subnet.public-subnet` and `aws_subnet.private-subnet` reside within the IP block defined by `aws_vpc.main_vpc`.
+- `aws_security_group.ecs_sg` is scoped inside `aws_vpc.main_vpc` and regulates ingress to ECS containers.
+- Each `aws_s3_bucket_versioning` resource is explicitly bound to its target `aws_s3_bucket` (`uploads_bucket`, `uploads_bucket_2`, `uploads_bucket_3`, `uploads_bucket_4`, `uploads_bucket_6`).
 
 ---
 
@@ -141,7 +141,7 @@ graph TD
             IGW["Internet Gateway (dev-igw)"]
             
             subgraph SubnetPub ["Public Subnet (10.0.1.0/24 - eu-west-1a)"]
-                PubResources["Public Web Traffic / Load Balancer Entry"]
+                PubResources["Public Web Traffic Entry / Load Balancer"]
             end
             
             subgraph SubnetPriv ["Private Subnet (10.0.10.0/24 - eu-west-1b)"]
