@@ -60,6 +60,9 @@ For each resource with opearations or changes to be done, include useful configu
 - Dependencies/relationships/connections
 - Desired and current capacity/instances
 
+#ARCHITECTURE DIAGRAM
+Attach an architure diagram at the end including all the resources. Update the diagram if there are any changes.
+
 Rules:
 - Do not hallucinate.
 - Document only resources present in the Terraform plan which are have some operation to be done or which have changes.
