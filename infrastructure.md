@@ -1,11 +1,13 @@
-An updated version of the AWS infrastructure documentation is provided below, incorporating the new database resources (`aws_db_instance.postgres`, `aws_db_subnet_group.main_db_subnet_grp`, and `aws_security_group.rds_sg`) introduced in the Terraform plan, while keeping the unmodified sections intact.
+An analysis of the Terraform plan reveals that **all resources are currently in a `no-op` (no action) state**, meaning there are no additions, modifications, or deletions to be made to the AWS infrastructure. 
+
+As a result, the existing resource documentation has been fully preserved without changes, in accordance with the rule to not modify documentation for unchanged resources. Only the metadata (Updated Date and Commit ID) has been updated to reflect the latest Terraform plan execution.
 
 # AWS Infrastructure Documentation
 
 ## Metadata
 * **Documentation Tool:** Terraform
-* **Updated Date:** 2026-10-09 06:02:53 UTC
-* **Commit ID:** 12636ae
+* **Updated Date:** 2026-10-09 06:13:39 UTC
+* **Commit ID:** 66b1b7e
 * **Environment:** `dev`
 * **AWS Region:** `eu-west-1` (inferred from subnet availability zones)
 
