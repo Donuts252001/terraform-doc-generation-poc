@@ -1,13 +1,11 @@
 # AWS Infrastructure Documentation
 
-## Infrastructure Overview
-This document describes the AWS infrastructure resources managed by Terraform. The current state represents a new deployment of networking, compute, storage, and security resources in the development (`dev`) environment.
-
+- **Infrastructure overview**
 - **Documentation by:** Terraform
-- **Updated date:** 2026-10-09 07:10:29 UTC
-- **Commit ID:** d8f4864
+- **Updated date:** 2026-10-09 07:19:08 UTC
+- **Commit ID:** 7527cf4
 - **Environment:** `dev`
-- **AWS Region:** `eu-west-1` (derived from Availability Zones `eu-west-1a` and `eu-west-1b`)
+- **AWS Region:** `eu-west-1`
 
 ---
 
@@ -89,6 +87,18 @@ This document describes the AWS infrastructure resources managed by Terraform. T
     *   **Tags:**
         *   `Name`: `dev-ecs-sg`
 *   **Dependencies/Relationships:** Restricts traffic to resources running inside `aws_vpc.main_vpc`.
+
+### RDS Security Group
+*   **Resource Type:** `aws_security_group`
+*   **Resource Name:** `rds_sg`
+*   **Location:** `eu-west-1`
+*   **Purpose:** Controls inbound and outbound database access, allowing PostgreSQL traffic exclusively from the ECS security group.
+*   **Important Settings:**
+    *   **Ingress Rules:**
+        *   Port `5432` (TCP) allowed from security group `aws_security_group.ecs_sg` (`sg-073f99616f8db7fab`).
+    *   **Tags:**
+        *   `Name`: `dev-rds-sg`
+*   **Dependencies/Relationships:** Associated with `aws_vpc.main_vpc` and references `aws_security_group.ecs_sg`.
 
 ---
 
@@ -181,6 +191,41 @@ The infrastructure defines five distinct S3 buckets managed via name prefixes wi
 
 ---
 
+## Databases
+
+### Database Subnet Group
+*   **Resource Type:** `aws_db_subnet_group`
+*   **Resource Name:** `main_db_subnet_grp`
+*   **Location:** `eu-west-1`
+*   **Purpose:** Groups subnets across availability zones for deployment of RDS database instances.
+*   **Important Settings:**
+    *   `name`: `dev-db-subnet-group`
+    *   `subnet_ids`: `subnet-02fa4d5491ec12290` (Private Subnet), `subnet-0b59da50d2e01dce3` (Public Subnet)
+    *   **Tags:**
+        *   `Name`: `dev-db-subnet-group`
+
+### PostgreSQL Database Instance
+*   **Resource Type:** `aws_db_instance`
+*   **Resource Name:** `postgres`
+*   **Location:** `eu-west-1`
+*   **Purpose:** Provides a managed relational database service running PostgreSQL for application data persistence.
+*   **Important Settings:**
+    *   `identifier`: `dev-postgres`
+    *   `engine`: `postgres`
+    *   `engine_version`: `16`
+    *   `instance_class`: `db.t3.micro`
+    *   `allocated_storage`: `20` GB
+    *   `username`: `postgres`
+    *   `skip_final_snapshot`: `true`
+    *   `publicly_accessible`: `false`
+    *   **Tags:**
+        *   `Name`: `dev-postgres`
+        *   `Environment`: `dev`
+        *   `ManagedBy`: `Terraform`
+*   **Dependencies/Relationships:** Associated with `aws_db_subnet_group.main_db_subnet_grp` and protected by `aws_security_group.rds_sg`.
+
+---
+
 ## Monitoring and Logging
 
 ### ECS Container Insights
@@ -207,6 +252,15 @@ The infrastructure defines five distinct S3 buckets managed via name prefixes wi
 │                            │              ▼            │
 │                            │     [aws_security_group]  │
 │                            │         (dev-ecs-sg)      │
+│                            │              │            │
+│                            │              │ (Port 5432)│
+│                            │              ▼            │
+│                            │     [aws_security_group]  │
+│                            │         (dev-rds-sg)      │
+│                            │              │            │
+│                            │              ▼            │
+│                            │     [aws_db_instance]     │
+│                            │        (dev-postgres)     │
 └────────────────────────────┴───────────────────────────┘
 
 ┌────────────────────────────────────────────────────────┐
@@ -225,4 +279,5 @@ The infrastructure defines five distinct S3 buckets managed via name prefixes wi
 ## Important Configuration Details
 
 1.  **VPC Internal Traffic Constraint:** The security group `dev-ecs-sg` only permits ingress traffic on port `3000` from sources belonging to the `10.0.0.0/16` CIDR block. Services running outside the VPC range will not be able to query container endpoints on port `3000` directly.
-2.  **S3 Bucket Configuration:** All five S3 buckets are configured utilizing prefixes. True bucket names will be postfixed with random identifiers upon application of the Terraform plan. Buckets `dev-uploads` and `dev-uploads-6` have data preservation versioning **Enabled**.
+2.  **Database Security and Access:** The RDS instance `dev-postgres` is launched into subnets defined by `dev-db-subnet-group` and restricted by `dev-rds-sg`, which permits inbound connections strictly on port `5432` from the ECS security group (`dev-ecs-sg`). It is configured as non-publicly accessible.
+3.  **S3 Bucket Configuration:** All five S3 buckets are configured utilizing prefixes. True bucket names will be postfixed with random identifiers upon application of the Terraform plan. Buckets `dev-uploads` and `dev-uploads-6` have data preservation versioning **Enabled**.
