@@ -2,17 +2,31 @@
 
 - **Infrastructure overview**: Incremental changes and additions to the development environment managed via Terraform, focusing on networking additions, database configuration, container orchestration, and object storage buckets.
 - **Documentation by**: Terraform
-- **Updated date**: 2026-10-09 10:12:13 UTC
-- **Commit ID**: c1aacae
+- **Updated date**: 2026-10-09 10:16:09 UTC
+- **Commit ID**: 5d272b4
 - **Environment**: dev
 - **AWS region**: eu-west-1
+
+---
+
+## VPC and Networking
+- **Resource Type**: `aws_vpc`
+- **Resource Name**: `main_vpc`
+- **Location**: `eu-west-1`
+- **Purpose**: Provides the foundational virtual private cloud network for the development environment.
+- **Important Settings**:
+  - CIDR Block: `10.0.0.0/16`
+  - Instance Tenancy: `default`
+  - Enable DNS Hostnames: `true`
+  - Enable DNS Support: `true`
+  - Tags: `Environment = dev`, `ManagedBy = Terraform`, `Name = dev-vpc`
 
 ---
 
 ## Subnets
 - **Resource Type**: `aws_subnet`
 - **Resource Name**: `private-subnet`
-- **Location**: `eu-west-1b` (`vpc-01e5aa16c200ec270`)
+- **Location**: `eu-central-1b`
 - **Purpose**: Provides private network isolation for backend database resources.
 - **Important Settings**:
   - CIDR Block: `10.0.10.0/24`
@@ -20,12 +34,22 @@
   - Tags: `Name = dev-private-subnet`, `Type = Private`
 - **Dependencies/Relationships/Connections**: Associated with `aws_vpc.main_vpc`.
 
+- **Resource Type**: `aws_subnet`
+- **Resource Name**: `public-subnet`
+- **Location**: `eu-central-1a`
+- **Purpose**: Provides public network connectivity for inbound internet traffic.
+- **Important Settings**:
+  - CIDR Block: `10.0.1.0/24`
+  - Map Public IP on Launch: `true`
+  - Tags: `Name = dev-public-subnet`, `Type = Public`
+- **Dependencies/Relationships/Connections**: Associated with `aws_vpc.main_vpc`.
+
 ---
 
 ## Internet/NAT Gateways
 - **Resource Type**: `aws_internet_gateway`
 - **Resource Name**: `igw`
-- **Location**: `vpc-01e5aa16c200ec270`
+- **Location**: `eu-west-1`
 - **Purpose**: Enables internet access for resources within the VPC.
 - **Important Settings**:
   - Tags: `Name = dev-igw`
@@ -35,14 +59,25 @@
 
 ## Security Groups
 - **Resource Type**: `aws_security_group`
+- **Resource Name**: `ecs_sg`
+- **Location**: `eu-west-1`
+- **Purpose**: Controls network traffic for ECS cluster container workloads.
+- **Important Settings**:
+  - Name: `dev-ecs-sg`
+  - Ingress: TCP port `3000` allowed from CIDR block `10.0.0.0/16`.
+  - Egress: All outbound traffic allowed (`0.0.0.0/0`, protocol `-1`).
+  - Tags: `Name = dev-ecs-sg`
+- **Dependencies/Relationships/Connections**: Attached to `aws_vpc.main_vpc`.
+
+- **Resource Type**: `aws_security_group`
 - **Resource Name**: `rds_sg`
-- **Location**: `vpc-01e5aa16c200ec270`
+- **Location**: `eu-west-1`
 - **Purpose**: Controls network traffic for the RDS PostgreSQL database instance.
 - **Important Settings**:
   - Name: `dev-rds-sg`
-  - Ingress: TCP port `5432` allowed from security group `sg-073f99616f8db7fab` (`dev-ecs-sg`).
+  - Ingress: TCP port `5432` allowed.
   - Tags: `Name = dev-rds-sg`
-- **Dependencies/Relationships/Connections**: References the ECS security group (`aws_security_group.ecs_sg`) for ingress access and attaches to `aws_vpc.main_vpc`.
+- **Dependencies/Relationships/Connections**: Attaches to `aws_vpc.main_vpc`.
 
 ---
 
@@ -82,7 +117,7 @@
 ## Databases
 - **Resource Type**: `aws_db_subnet_group`
 - **Resource Name**: `main_db_subnet_grp`
-- **Location**: `eu-west-1` (`vpc-01e5aa16c200ec270`)
+- **Location**: `eu-west-1`
 - **Purpose**: Groups database subnets to ensure RDS is deployed into the correct network topology.
 - **Important Settings**:
   - Name: `dev-db-subnet-group`
