@@ -2,8 +2,8 @@
 
 - **Infrastructure overview:** Multi-tier containerized web application infrastructure with segregated networking and object storage.
 - **Documentation by:** Terraform
-- **Updated date:** 2026-10-06 08:44:38 UTC
-- **Commit ID:** 15b6c6a
+- **Updated date:** 2026-10-09 05:56:10 UTC
+- **Commit ID:** e5b2414
 - **Environment:** dev
 - **AWS region:** eu-west-1
 
@@ -73,6 +73,17 @@
   - Egress: All ports and protocols (`-1`) allowed to `0.0.0.0/0` (any destination).
   - Tags: `Name = dev-ecs-sg`
 
+### RDS Security Group
+- **Resource type:** `aws_security_group`
+- **Resource name:** `rds_sg`
+- **Location:** `aws_vpc.main_vpc`
+- **Purpose:** Controls network traffic for the PostgreSQL database instance.
+- **Dependencies/relationships/connections:** Associated with `aws_vpc.main_vpc`. Allows traffic from the ECS Security Group (`ecs_sg`).
+- **Important settings:**
+  - Ingress: Port `5432` (TCP) allowed from ECS Security Group (`sg-0513cc1546b6b74e2`).
+  - Egress: Managed by default rules.
+  - Tags: `Name = dev-rds-sg`
+
 ---
 
 ## Compute resources
@@ -120,7 +131,33 @@
 ---
 
 ## Databases
-*(Note: PostgreSQL RDS Instance and DB Subnet Group resources are not configured in this current infrastructure generation.)*
+
+### DB Subnet Group
+- **Resource type:** `aws_db_subnet_group`
+- **Resource name:** `main_db_subnet_grp`
+- **Location:** AWS Region `eu-west-1`
+- **Purpose:** Defines the subnets across which the RDS PostgreSQL database can reside.
+- **Dependencies/relationships/connections:** References Subnet IDs `subnet-01eb3ad09b2f83b80` (Private Subnet) and `subnet-0235a987efe032c71` (Public Subnet).
+- **Important settings:**
+  - Name: `dev-db-subnet-group`
+  - Tags: `Name = dev-db-subnet-group`
+
+### PostgreSQL RDS Instance
+- **Resource type:** `aws_db_instance`
+- **Resource name:** `postgres`
+- **Location:** AWS Region `eu-west-1` (within DB Subnet Group `dev-db-subnet-group`)
+- **Purpose:** Primary database engine for persistent relational data in the development environment.
+- **Dependencies/relationships/connections:** Deployed inside `aws_db_subnet_group.main_db_subnet_grp` and secured under `aws_security_group.rds_sg`.
+- **Important settings:**
+  - Database Identifier: `dev-postgres`
+  - Engine: `postgres` (Version: `16`)
+  - DB Instance Class: `db.t3.micro`
+  - Allocated Storage: `20` GB
+  - Parameter Group Name: `default.postgres16`
+  - Publicly Accessible: Disabled (`false`)
+  - Skip Final Snapshot: Enabled (`true`)
+  - Master Username: `postgres`
+  - Tags: `Name = dev-postgres`, `Environment = dev`, `ManagedBy = Terraform`
 
 ---
 
@@ -129,12 +166,14 @@
 - `aws_subnet.public-subnet` and `aws_subnet.private-subnet` reside within the IP block defined by `aws_vpc.main_vpc`.
 - `aws_security_group.ecs_sg` is scoped inside `aws_vpc.main_vpc` and regulates ingress to ECS containers.
 - Each `aws_s3_bucket_versioning` resource is explicitly bound to its target `aws_s3_bucket` (`uploads_bucket`, `uploads_bucket_2`, `uploads_bucket_3`, `uploads_bucket_4`, `uploads_bucket_6`).
+- `aws_db_subnet_group.main_db_subnet_grp` aggregates the private (`subnet-01eb3ad09b2f83b80`) and public (`subnet-0235a987efe032c71`) subnets to host database interfaces.
+- `aws_db_instance.postgres` is associated with `aws_db_subnet_group.main_db_subnet_grp` and restricted to internal traffic on port `5432` from `aws_security_group.ecs_sg` via `aws_security_group.rds_sg`.
 
 ---
 
 # ARCHITECTURE DIAGRAM
 
-Below is the conceptual and physical architecture diagram for the `dev` environment. It illustrates the network topology, security isolation, compute orchestration, and S3 object storage layout.
+Below is the conceptual and physical architecture diagram for the `dev` environment. It illustrates the network topology, security isolation, compute orchestration, database deployment, and S3 object storage layout.
 
 ```mermaid
 graph TD
@@ -152,9 +191,17 @@ graph TD
         %% Private Subnet
         subgraph PrivSubnet ["Private Subnet (10.0.10.0/24) <br> AZ: eu-west-1b"]
             ECS["📦 ECS Cluster: dev-cluster2 <br> (Container Tasks)"]
-            SG["🔒 Security Group: dev-ecs-sg <br> (Allow TCP 3000 from VPC)"]
+            SG_ECS["🔒 Security Group: dev-ecs-sg <br> (Allow TCP 3000 from VPC)"]
             
-            ECS --> SG
+            ECS --> SG_ECS
+        end
+
+        %% Database Layer
+        subgraph DB_Subnet_Grp ["DB Subnet Group: dev-db-subnet-group"]
+            DB["🗄️ RDS PostgreSQL: dev-postgres <br> (db.t3.micro, Engine v16)"]
+            SG_RDS["🔒 Security Group: dev-rds-sg <br> (Allow TCP 5432 from dev-ecs-sg)"]
+            
+            DB --> SG_RDS
         end
     end
 
@@ -186,6 +233,11 @@ graph TD
     IGW <--> PubRoute
     PubRoute -.-> PrivSubnet
     ECS -.-> Storage
+    
+    %% ECS to RDS security mapping
+    SG_ECS -- "Port 5432" --> SG_RDS
+    DB_Subnet_Grp -.-> PubSubnet
+    DB_Subnet_Grp -.-> PrivSubnet
 ```
 
 ### Architectural Components Description:
@@ -193,4 +245,5 @@ graph TD
 2. **Public Subnet:** Positioned in Availability Zone `eu-west-1a` with a direct routing capability via the Internet Gateway (`dev-igw`) allowing inbound/outbound public internet communication.
 3. **Private Subnet:** Positioned in Availability Zone `eu-west-1b`, housing compute workloads that should not be directly exposed to the open internet. 
 4. **ECS Cluster (dev-cluster2):** Manages docker container tasks safely inside the Private Subnet, governed by `dev-ecs-sg` restricting traffic strictly to Port `3000` from internal network resources.
-5. **S3 Storage Layer:** Contains five independent object storage buckets used for storage. Buckets `dev-uploads` and `dev-uploads-6` have version control enabled to prevent accidental deletion and preserve deployment files. Buckets `2`, `3`, and `4` have version control disabled.
+5. **PostgreSQL RDS (dev-postgres):** Non-publicly accessible SQL engine deployed within DB Subnet Group `dev-db-subnet-group`. Governed by security group `dev-rds-sg` allowing TCP ingress traffic only on Port `5432` from the ECS Container Tasks.
+6. **S3 Storage Layer:** Contains five independent object storage buckets used for storage. Buckets `dev-uploads` and `dev-uploads-6` have version control enabled to prevent accidental deletion and preserve deployment files. Buckets `2`, `3`, and `4` have version control disabled.
