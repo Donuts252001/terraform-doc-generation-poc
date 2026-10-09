@@ -40,60 +40,60 @@ jobs:
         working-directory: terraform-iaac
         run: terraform validate
 
-      - name: Terraform Plan & Save JSON
-        working-directory: terraform-iaac
-        run: |
-                terraform plan -out=tf-plan -input=false
-                terraform show -json tf-plan > tf-plan.json
+      # - name: Terraform Plan & Save JSON
+      #   working-directory: terraform-iaac
+      #   run: |
+      #           terraform plan -out=tf-plan -input=false
+      #           terraform show -json tf-plan > tf-plan.json
 
-      - name: Upload Terraform Plan
-        uses: actions/upload-artifact@v4
-        with:
-          name: terraform-plan
-          path: |
-            terraform-iaac/tf-plan.json
+      # - name: Upload Terraform Plan
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: terraform-plan
+      #     path: |
+      #       terraform-iaac/tf-plan.json
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
+      # - name: Setup Python
+      #   uses: actions/setup-python@v5
+      #   with:
+      #     python-version: "3.12"
 
-      # - name: Install OpenAI SDK
-      #   run: pip install openai
+      # # - name: Install OpenAI SDK
+      # #   run: pip install openai
 
+      # # - name: Generate Infrastructure Documentation
+      # #   env:
+      # #     OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      # #   run: python scripts/generate-doc.py
+
+      # - name: Install Python packages
+      #   run: pip install litellm
+        
       # - name: Generate Infrastructure Documentation
       #   env:
-      #     OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      #   run: python scripts/generate-doc.py
+      #     LLM_MODEL: gemini/gemini-3.5-flash-lite
+      #     # LLM_MODEL: gemini/gemini-3.8-flash
+      #     GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      #   run: python scripts/generate-documentation.py
 
-      - name: Install Python packages
-        run: pip install litellm
-        
-      - name: Generate Infrastructure Documentation
-        env:
-          LLM_MODEL: gemini/gemini-3.5-flash-lite
-          # LLM_MODEL: gemini/gemini-3.8-flash
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python scripts/generate-documentation.py
+      # - name: Documentation add to repository
+      #   run: |
+      #           git config --global user.email "26korgaonkar.vaishnavi2001@gmail.com"
+      #           git config --global user.name "github-actions[bot]"
+      #           git add infrastructure.md
+      #           git commit --allow-empty -m "docs: update Terraform Infrastructure Documentation File"
+      #           git push
 
-      - name: Documentation add to repository
-        run: |
-                git config --global user.email "26korgaonkar.vaishnavi2001@gmail.com"
-                git config --global user.name "github-actions[bot]"
-                git add infrastructure.md
-                git commit --allow-empty -m "docs: update Terraform Infrastructure Documentation File"
-                git push
-
-      - name: Upload Infrastructure Documentation
-        uses: actions/upload-artifact@v4
-        with:
-          name: terraform-infrastructure-documentation
-          path: infrastructure.md
+      # - name: Upload Infrastructure Documentation
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: terraform-infrastructure-documentation
+      #     path: infrastructure.md
 
       # - name: Terraform Apply
       #   working-directory: terraform-iaac
       #   run: terraform apply -input=false tf-plan
 
-      # - name: Terraform Destroy
-      #   working-directory: terraform-iaac
-      #   run: terraform destroy -auto-approve
+      - name: Terraform Destroy
+        working-directory: terraform-iaac
+        run: terraform destroy -auto-approve
