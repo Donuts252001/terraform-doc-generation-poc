@@ -3,7 +3,7 @@ variable "aws_region" {
 }
 
 variable "environment" {
-  default = "dev"
+  default = "qa"
 }
 
 variable "vpc_cidr" {
