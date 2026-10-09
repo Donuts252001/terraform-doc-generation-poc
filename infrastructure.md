@@ -1,14 +1,10 @@
-An analysis of the Terraform plan reveals that **all resources are currently in a `no-op` (no action) state**, meaning there are no additions, modifications, or deletions to be made to the AWS infrastructure. 
-
-As a result, the existing resource documentation has been fully preserved without changes, in accordance with the rule to not modify documentation for unchanged resources. Only the metadata (Updated Date and Commit ID) has been updated to reflect the latest Terraform plan execution.
-
 # AWS Infrastructure Documentation
 
 ## Metadata
 * **Documentation Tool:** Terraform
-* **Updated Date:** 2026-10-09 06:13:39 UTC
-* **Commit ID:** 66b1b7e
-* **Environment:** `dev`
+* **Updated Date:** 2026-10-09 10:42:15 UTC
+* **Commit ID:** b0b7d97
+* **Environment:** `qa`
 * **AWS Region:** `eu-west-1` (inferred from subnet availability zones)
 
 ---
@@ -16,7 +12,7 @@ As a result, the existing resource documentation has been fully preserved withou
 ## Infrastructure Overview
 This document describes the planned changes to the AWS infrastructure. The deployment provisions core networking components (VPC, subnets, internet gateway, and security groups), compute clusters (Amazon ECS), object storage resources (Amazon S3 buckets with their respective versioning configurations), and database resources (Amazon RDS PostgreSQL instance, database subnet groups, and access security controls).
 
-All resources documented below are flagged for creation (`create` action) in the Terraform plan.
+All resources documented below are flagged for creation (`create` action) in the Terraform plan to establish the target **`qa`** environment.
 
 ---
 
@@ -27,15 +23,15 @@ All resources documented below are flagged for creation (`create` action) in the
 * **Resource Type:** `aws_vpc`
 * **Logical Name:** `main_vpc`
 * **Location:** AWS Region `eu-west-1`
-* **Purpose:** Serves as the primary isolated virtual network for the `dev` environment.
+* **Purpose:** Serves as the primary isolated virtual network for the `qa` environment.
 * **Important Settings:**
   * **CIDR Block:** `10.0.0.0/16`
   * **Enable DNS Support:** `true`
   * **Enable DNS Hostnames:** `true`
   * **Instance Tenancy:** `default`
   * **Tags:**
-    * `Name`: `dev-vpc`
-    * `Environment`: `dev`
+    * `Name`: `qa-vpc`
+    * `Environment`: `qa`
     * `ManagedBy`: `Terraform`
 
 ---
@@ -53,7 +49,7 @@ All resources documented below are flagged for creation (`create` action) in the
   * **Map Public IP on Launch:** `true`
   * **Associated VPC:** `aws_vpc.main_vpc`
   * **Tags:**
-    * `Name`: `dev-public-subnet`
+    * `Name`: `qa-public-subnet`
     * `Type`: `Public`
 
 ### Private Subnet
@@ -67,7 +63,7 @@ All resources documented below are flagged for creation (`create` action) in the
   * **Map Public IP on Launch:** `false`
   * **Associated VPC:** `aws_vpc.main_vpc`
   * **Tags:**
-    * `Name`: `dev-private-subnet`
+    * `Name`: `qa-private-subnet`
     * `Type`: `Private`
 
 ---
@@ -82,7 +78,7 @@ All resources documented below are flagged for creation (`create` action) in the
 * **Purpose:** Allows communication between the VPC's public subnet and the internet.
 * **Important Settings:**
   * **Tags:**
-    * `Name`: `dev-igw`
+    * `Name`: `qa-igw`
 
 ---
 
@@ -103,7 +99,7 @@ All resources documented below are flagged for creation (`create` action) in the
     * **Protocol:** All (`-1`)
     * **Destination:** `0.0.0.0/0` (Allow all outbound traffic)
   * **Tags:**
-    * `Name`: `dev-ecs-sg`
+    * `Name`: `qa-ecs-sg`
 
 ### RDS Security Group
 #### `aws_security_group.rds_sg`
@@ -116,7 +112,7 @@ All resources documented below are flagged for creation (`create` action) in the
     * **Port:** `5432` (TCP - PostgreSQL default port)
     * **Source:** Dynamic security group reference (ECS container task group)
   * **Tags:**
-    * `Name`: `dev-rds-sg`
+    * `Name`: `qa-rds-sg`
 
 ---
 
@@ -127,13 +123,13 @@ All resources documented below are flagged for creation (`create` action) in the
 * **Resource Type:** `aws_ecs_cluster`
 * **Logical Name:** `main_ecs2`
 * **Location:** `eu-west-1`
-* **Purpose:** Logical grouping of tasks or services running containerized workloads in the development environment.
+* **Purpose:** Logical grouping of tasks or services running containerized workloads in the QA environment.
 * **Important Settings:**
-  * **Cluster Name:** `dev-cluster2`
+  * **Cluster Name:** `qa-cluster2`
   * **Settings:**
     * `containerInsights`: `enabled` (forces CloudWatch monitoring for cluster performance metrics)
   * **Tags:**
-    * `Environment`: `dev`
+    * `Environment`: `qa`
     * `ManagedBy`: `Terraform`
 
 ---
@@ -146,11 +142,11 @@ The following S3 storage buckets are to be provisioned within the `eu-west-1` re
 
 | Logical Name | Bucket Prefix | Force Destroy | Versioning Status | Name Tag | Environment Tag |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `aws_s3_bucket.uploads_bucket` | `dev-uploads-bucket-` | `false` | **Enabled** | `dev-uploads` | `dev` |
-| `aws_s3_bucket.uploads_bucket_2` | `dev-uploads-bucket-2` | `false` | **Disabled** | `dev-uploads-2` | `dev` |
-| `aws_s3_bucket.uploads_bucket_3` | `dev-uploads-bucket-3` | `false` | **Disabled** | `dev-uploads-3` | `dev` |
-| `aws_s3_bucket.uploads_bucket_4` | `dev-uploads-bucket-4` | `false` | **Disabled** | `dev-uploads-4` | `dev` |
-| `aws_s3_bucket.uploads_bucket_6` | `dev-uploads-bucket-6` | `false` | **Enabled** | `dev-uploads-6` | `dev` |
+| `aws_s3_bucket.uploads_bucket` | `qa-uploads-bucket-` | `false` | **Enabled** | `qa-uploads` | `qa` |
+| `aws_s3_bucket.uploads_bucket_2` | `qa-uploads-bucket-2` | `false` | **Disabled** | `qa-uploads-2` | `qa` |
+| `aws_s3_bucket.uploads_bucket_3` | `qa-uploads-bucket-3` | `false` | **Disabled** | `qa-uploads-3` | `qa` |
+| `aws_s3_bucket.uploads_bucket_4` | `qa-uploads-bucket-4` | `false` | **Disabled** | `qa-uploads-4` | `qa` |
+| `aws_s3_bucket.uploads_bucket_6` | `qa-uploads-bucket-6` | `false` | **Enabled** | `qa-uploads-6` | `qa` |
 
 #### S3 Bucket Versioning Configuration Details:
 * **`aws_s3_bucket_versioning.uploads_bucket`:** Configures versioning to **Enabled** on `aws_s3_bucket.uploads_bucket`.
@@ -169,36 +165,36 @@ The following S3 storage buckets are to be provisioned within the `eu-west-1` re
 * **Logical Name:** `main_db_subnet_grp`
 * **Purpose:** Groups subnet IDs within the VPC for RDS hosting.
 * **Important Settings:**
-  * **Name:** `dev-db-subnet-group`
+  * **Name:** `qa-db-subnet-group`
   * **Description:** `Managed by Terraform`
   * **Tags:**
-    * `Name`: `dev-db-subnet-group`
+    * `Name`: `qa-db-subnet-group`
 
 ### PostgreSQL Instance
 #### `aws_db_instance.postgres`
 * **Resource Type:** `aws_db_instance`
 * **Logical Name:** `postgres`
-* **Location:** Private Subnets mapped via `dev-db-subnet-group`
-* **Purpose:** Serves as the central relational database system for dev workloads.
+* **Location:** Private Subnets mapped via `qa-db-subnet-group`
+* **Purpose:** Serves as the central relational database system for QA workloads.
 * **Important Settings:**
   * **Engine:** `postgres` (Major Version `16`)
-  * **Instance Class:** `db.t3.micro`
+  * **Instance class:** `db.t3.micro`
   * **Allocated Storage:** `20` GB
   * **Publicly Accessible:** `false`
-  * **DB Subnet Group Name:** `dev-db-subnet-group`
+  * **DB Subnet Group Name:** `qa-db-subnet-group`
   * **Parameter Group Name:** `default.postgres16`
   * **Skip Final Snapshot:** `true`
   * **Deletion Protection:** `false`
   * **Tags:**
-    * `Name`: `dev-postgres`
-    * `Environment`: `dev`
+    * `Name`: `qa-postgres`
+    * `Environment`: `qa`
     * `ManagedBy`: `Terraform`
 
 ---
 
 ## Monitoring and Logging
 
-* **ECS Container Insights:** Active and set to `enabled` on the `aws_ecs_cluster.main_ecs2` resource (`dev-cluster2`). This configuration triggers native collection of CPU, memory, and network usage metrics at the container and task level to Amazon CloudWatch.
+* **ECS Container Insights:** Active and set to `enabled` on the `aws_ecs_cluster.main_ecs2` resource (`qa-cluster2`). This configuration triggers native collection of CPU, memory, and network usage metrics at the container and task level to Amazon CloudWatch.
 
 ---
 
@@ -206,7 +202,7 @@ The following S3 storage buckets are to be provisioned within the `eu-west-1` re
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
-│                          aws_vpc (dev-vpc)                             │
+│                           aws_vpc (qa-vpc)                             │
 │                                                                        │
 │    ┌──────────────────────────────┐      ┌────────────────────────┐    │
 │    │  aws_subnet.public-subnet    │      │aws_subnet.private-sub..│    │
@@ -221,13 +217,13 @@ The following S3 storage buckets are to be provisioned within the `eu-west-1` re
 │                                                       │                │
 │                                                       ▼                │
 │                                             [aws_db_instance.postgres] │
-│                                             (dev-db-subnet-group)      │
+│                                             (qa-db-subnet-group)       │
 └────────────────────────────────────────────────────────────────────────┘
 
 ┌────────────────────────────────────────────────────────────────────────┐
 │                        Amazon ECS Resources                            │
 │                                                                        │
-│      aws_ecs_cluster.main_ecs2 (dev-cluster2)                          │
+│      aws_ecs_cluster.main_ecs2 (qa-cluster2)                           │
 │        └─ Container Insights: Enabled                                  │
 └────────────────────────────────────────────────────────────────────────┘
 
@@ -235,15 +231,15 @@ The following S3 storage buckets are to be provisioned within the `eu-west-1` re
 │                        Amazon S3 Buckets                               │
 │                                                                        │
 │ ┌────────────────────────┐  ┌────────────────────────┐                 │
-│ │ dev-uploads            │  │ dev-uploads-2          │                 │
+│ │ qa-uploads             │  │ qa-uploads-2           │                 │
 │ │ (Versioning: Enabled)  │  │ (Versioning: Disabled) │                 │
 │ └────────────────────────┘  └────────────────────────┘                 │
 │ ┌────────────────────────┐  ┌────────────────────────┐                 │
-│ │ dev-uploads-3          │  │ dev-uploads-4          │                 │
+│ │ qa-uploads-3           │  │ qa-uploads-4           │                 │
 │ │ (Versioning: Disabled) │  │ (Versioning: Disabled) │                 │
 │ └────────────────────────┘  └────────────────────────┘                 │
 │ ┌────────────────────────┐                                             │
-│ │ dev-uploads-6          │                                             │
+│ │ qa-uploads-6           │                                             │
 │ │ (Versioning: Enabled)  │                                             │
 │ └────────────────────────┘                                             │
 └────────────────────────────────────────────────────────────────────────┘
