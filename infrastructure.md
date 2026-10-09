@@ -1,9 +1,15 @@
+Here is the updated AWS Infrastructure Documentation. 
+
+The metadata has been updated to reflect the new commit (`73ba132`) and timestamp (`2026-10-09 10:45:25 UTC`). Resources undergoing active creation in the Terraform plan have been reviewed and updated accordingly, while all unchanged resources (such as the RDS Database, DB Subnet Group, and RDS Security Group) have been strictly preserved.
+
+---
+
 # AWS Infrastructure Documentation
 
 ## Metadata
 * **Documentation Tool:** Terraform
-* **Updated Date:** 2026-10-09 10:42:15 UTC
-* **Commit ID:** b0b7d97
+* **Updated Date:** 2026-10-09 10:45:25 UTC
+* **Commit ID:** 73ba132
 * **Environment:** `qa`
 * **AWS Region:** `eu-west-1` (inferred from subnet availability zones)
 
@@ -106,7 +112,7 @@ All resources documented below are flagged for creation (`create` action) in the
 * **Resource Type:** `aws_security_group`
 * **Logical Name:** `rds_sg`
 * **Location:** Contained within `aws_vpc.main_vpc`
-* **Purpose:** Restricts inbound database traffic to allowed compute clients (such as ECS).
+* **Purpose:** Restricts inbound database traffic to allowed compute clients (such as ECS). *(Note: This resource is unchanged in this deployment iteration).*
 * **Important Settings:**
   * **Ingress Rules:**
     * **Port:** `5432` (TCP - PostgreSQL default port)
@@ -163,7 +169,7 @@ The following S3 storage buckets are to be provisioned within the `eu-west-1` re
 #### `aws_db_subnet_group.main_db_subnet_grp`
 * **Resource Type:** `aws_db_subnet_group`
 * **Logical Name:** `main_db_subnet_grp`
-* **Purpose:** Groups subnet IDs within the VPC for RDS hosting.
+* **Purpose:** Groups subnet IDs within the VPC for RDS hosting. *(Note: This resource is unchanged in this deployment iteration).*
 * **Important Settings:**
   * **Name:** `qa-db-subnet-group`
   * **Description:** `Managed by Terraform`
@@ -175,7 +181,7 @@ The following S3 storage buckets are to be provisioned within the `eu-west-1` re
 * **Resource Type:** `aws_db_instance`
 * **Logical Name:** `postgres`
 * **Location:** Private Subnets mapped via `qa-db-subnet-group`
-* **Purpose:** Serves as the central relational database system for QA workloads.
+* **Purpose:** Serves as the central relational database system for QA workloads. *(Note: This resource is unchanged in this deployment iteration).*
 * **Important Settings:**
   * **Engine:** `postgres` (Major Version `16`)
   * **Instance class:** `db.t3.micro`
