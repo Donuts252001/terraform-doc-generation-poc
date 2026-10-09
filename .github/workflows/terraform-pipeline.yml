@@ -40,11 +40,11 @@ jobs:
         working-directory: terraform-iaac
         run: terraform validate
 
-      # - name: Terraform Plan & Save JSON
-      #   working-directory: terraform-iaac
-      #   run: |
-      #           terraform plan -out=tf-plan -input=false
-      #           terraform show -json tf-plan > tf-plan.json
+      - name: Terraform Plan & Save JSON
+        working-directory: terraform-iaac
+        run: |
+                terraform plan -out=tf-plan -input=false
+                terraform show -json tf-plan > tf-plan.json
 
       - name: Upload Terraform Plan
         uses: actions/upload-artifact@v4
@@ -94,6 +94,6 @@ jobs:
       #   working-directory: terraform-iaac
       #   run: terraform apply -input=false tf-plan
 
-      - name: Terraform Destroy
-        working-directory: terraform-iaac
-        run: terraform destroy -auto-approve
+      # - name: Terraform Destroy
+      #   working-directory: terraform-iaac
+      #   run: terraform destroy -auto-approve
