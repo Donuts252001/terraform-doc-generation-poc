@@ -1,9 +1,9 @@
 variable "aws_region" {
-  default = "eu-north-1"
+  default = "eu-west-1"
 }
 
 variable "environment" {
-  default = "qa"
+  default = "dev"
 }
 
 variable "vpc_cidr" {
