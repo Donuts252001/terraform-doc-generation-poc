@@ -2,8 +2,8 @@
 
 - **Infrastructure overview**: Updated development infrastructure including VPC networking, subnets, internet gateway, security groups, ECS cluster, PostgreSQL database instance, DB subnet group, and S3 upload buckets with versioning.
 - **Documentation by**: Terraform
-- **Updated date**: 2026-10-21 07:13:58 UTC
-- **Commit ID**: feedf56
+- **Updated date**: 2026-10-21 07:17:58 UTC
+- **Commit ID**: de0f08a
 - **Environment**: dev
 - **AWS region**: eu-central-1
 
