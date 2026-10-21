@@ -66,33 +66,33 @@ jobs:
       # #     OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       # #   run: python scripts/generate-doc.py
 
-      # - name: Install Python packages
-      #   run: pip install litellm
+      - name: Install Python packages
+        run: pip install litellm
         
-      # - name: Generate Infrastructure Documentation
-      #   env:
-      #     LLM_MODEL: gemini/gemini-3.5-flash-lite
-      #     # LLM_MODEL: gemini/gemini-3.8-flash
-      #     GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-      #   run: python scripts/generate-documentation.py
+      - name: Generate Infrastructure Documentation
+        env:
+          LLM_MODEL: gemini/gemini-3.5-flash-lite
+          # LLM_MODEL: gemini/gemini-3.8-flash
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python scripts/generate-documentation.py
 
-      # - name: Documentation add to repository
-      #   run: |
-      #           git config --global user.email "26korgaonkar.vaishnavi2001@gmail.com"
-      #           git config --global user.name "github-actions[bot]"
-      #           git add infrastructure.md
-      #           git commit --allow-empty -m "docs: update Terraform Infrastructure Documentation File"
-      #           git push
+      - name: Documentation add to repository
+        run: |
+                git config --global user.email "26korgaonkar.vaishnavi2001@gmail.com"
+                git config --global user.name "github-actions[bot]"
+                git add infrastructure.md
+                git commit --allow-empty -m "docs: update Terraform Infrastructure Documentation File"
+                git push
 
-      # - name: Upload Infrastructure Documentation
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: terraform-infrastructure-documentation
-      #     path: infrastructure.md
+      - name: Upload Infrastructure Documentation
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-infrastructure-documentation
+          path: infrastructure.md
 
-      # - name: Terraform Apply
-      #   working-directory: terraform-iaac
-      #   run: terraform apply -input=false tf-plan
+      - name: Terraform Apply
+        working-directory: terraform-iaac
+        run: terraform apply -input=false tf-plan
 
       - name: Terraform Destroy
         working-directory: terraform-iaac
