@@ -2,8 +2,8 @@
 
 - **Infrastructure overview:** Development environment provisioning via Terraform incorporating VPC, Subnets, Internet Gateway, Security Groups, RDS PostgreSQL database, ECS cluster, and S3 storage buckets with versioning configurations.
 - **Documentation by:** Terraform
-- **Updated date:** 2026-10-21 07:26:15 UTC
-- **Commit ID:** 3d66b85
+- **Updated date:** 2026-10-21 07:32:10 UTC
+- **Commit ID:** 12f789c
 - **Environment:** dev
 - **AWS region:** `eu-west-1`
 
@@ -134,8 +134,12 @@
     - Name Prefix: `dev-uploads-bucket-4`
     - Tags: `Name = dev-uploads-4`, `Environment = dev`, `ManagedBy = Terraform`
     - Versioning Status: Disabled
+  - **Bucket 5:** 
+    - Name Prefix: `dev-uploads-bucket-5`
+    - Tags: `Name = dev-uploads-5`, `Environment = dev`, `ManagedBy = Terraform`
+    - Versioning Status: Enabled (Default/Managed via `aws_s3_bucket_versioning.uploads_bucket_5`)
 - **Dependencies/relationships/connections:** Independent S3 buckets with dedicated versioning configurations.
-- **Desired and current capacity/instances:** 4 S3 buckets.
+- **Desired and current capacity/instances:** 5 S3 buckets.
 
 ---
 
